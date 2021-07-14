@@ -5,4 +5,9 @@
     <color name="colorPrimaryDark">#455A64</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--switch colors-->
+    <color name="enable_thumb_green"></color>
+
+
 </resources>
