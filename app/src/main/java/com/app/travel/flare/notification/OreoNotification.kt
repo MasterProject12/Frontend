@@ -43,7 +43,7 @@ class OreoNotification (base: Context?) : ContextWrapper(base)
         getManager!!.createNotificationChannel(channel)
     }
 
-    private val getManager: NotificationManager? get()
+    val getManager: NotificationManager? get()
     {
         if (notificationManager == null)
         {
