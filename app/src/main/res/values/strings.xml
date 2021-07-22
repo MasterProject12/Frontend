@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">TravelFlare</string>
     <string name="location_permission_text">Location Permission</string>
+    <string name="req_location_permission">Location Permission Required</string>
+    <string name="report">Report</string>
+    <string name="report_incident">Report Incident</string>
 </resources>

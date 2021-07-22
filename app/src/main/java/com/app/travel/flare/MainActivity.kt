@@ -1,11 +1,49 @@
 package com.app.travel.flare
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.app.travel.flare.databinding.ActivityMainBinding
+import com.app.travel.flare.notification.INCIDENT_DETAIL_MESSAGE
+import com.app.travel.flare.notification.INCIDENT_PUSH
+import com.app.travel.flare.viewModel.MainActivityViewModel
+
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var viewModel : MainActivityViewModel
+    lateinit var binding : ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        if (intent != null) {
+            if (intent.action != null && intent.action == INCIDENT_PUSH) {
+                intent.getStringExtra(INCIDENT_DETAIL_MESSAGE)?.let { showMessageDialog(it) }
+            }
+        }
+        binding.reportBtn.setOnClickListener{
+            var intent = Intent(this, ReportIncidentActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+
+    private fun showMessageDialog(message: String) {
+        AlertDialog.Builder(this).setMessage(message)
+            .setPositiveButton(
+                    "Ok"
+            ) { dialog, _ -> dialog.dismiss() }.create().show()
+    }
+
+    companion object{
+        var TAG : String = MainActivity::class.java.name
     }
 }
