@@ -6,6 +6,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="greyLight">#E0E0E0</color>
+    <color name="greyDark">#BDBDBD</color>
+
     <!--switch colors-->
     <color name="enable_thumb_green"></color>
 

@@ -20,7 +20,7 @@ import com.app.travel.flare.viewModel.ReportIncidentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-class ReportIncidentActivity : AppCompatActivity(), OnCheckedChangeListener, View.OnClickListener {
+class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
 
     lateinit var binding : ActivityReportIncidentBinding
     var incidentList : ArrayList<String> = ArrayList()
@@ -32,7 +32,6 @@ class ReportIncidentActivity : AppCompatActivity(), OnCheckedChangeListener, Vie
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_report_incident)
-        binding.locationSwitchBtn.setOnCheckedChangeListener(this)
         binding.reportBtn.setOnClickListener(this)
         viewModel = ViewModelProvider(this).get(ReportIncidentViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -94,15 +93,6 @@ class ReportIncidentActivity : AppCompatActivity(), OnCheckedChangeListener, Vie
                 Log.d(MainActivity.TAG, "mLocationPermissionGranted : $mLocationPermissionGranted")
             }
         }
-    }
-
-    override fun onCheckedChanged(button: CompoundButton?, isChecked: Boolean) {
-        if(isChecked){
-            Log.d(TAG, "Enable location permission requested");
-        }else{
-            Log.d(TAG, "Disable location permission requested");
-        }
-
     }
 
     private fun setUpSpinner() {
