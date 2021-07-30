@@ -20,7 +20,7 @@ import com.app.travel.flare.viewModel.ReportIncidentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
+open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
 
     lateinit var binding : ActivityReportIncidentBinding
     var incidentList : ArrayList<String> = ArrayList()
@@ -105,9 +105,10 @@ class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun createList(){
-        incidentList.add("Road Accident")
-        incidentList.add("Road Construction")
-        incidentList.add("Bad conditioned road")
+        incidentList.add("Car Accident")
+        incidentList.add("Car Breakdown")
+        incidentList.add("Road Blockage")
+        incidentList.add("Construction Site")
     }
 
     companion object{

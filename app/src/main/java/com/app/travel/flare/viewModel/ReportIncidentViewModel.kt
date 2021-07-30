@@ -1,5 +1,6 @@
 package com.app.travel.flare.viewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.app.travel.flare.network.Networking
@@ -23,12 +24,18 @@ class ReportIncidentViewModel : ViewModel() {
             null,
             object : Networking.ResponseHandler {
                 override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Report Incident Success Response: $response")
                     reportIncidentLiveData.postValue(true)
                 }
 
                 override fun onFailure(failureType: Networking.ResponseHandler.FailureType?, responseCode: Int, reason: String?) {
+                    Log.d(TAG, "Report Incident Failed: $failureType")
                     reportIncidentLiveData.postValue(false)
                 }
             })
+    }
+
+    companion object{
+        val TAG : String = ReportIncidentViewModel::class.java.name
     }
 }
