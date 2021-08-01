@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "952853973746",
+    "project_id": "travel-flare",
+    "storage_bucket": "travel-flare.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952853973746:android:aa7001dd662354b79b9e6b",
+        "android_client_info": {
+          "package_name": "com.app.travel.flare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952853973746-4ncr9drj9mg2c5g67gh9jgu1ubv8ijf1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdASSIEvjwtFTsw1fa9Hok94UomNid6rE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952853973746-4ncr9drj9mg2c5g67gh9jgu1ubv8ijf1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
