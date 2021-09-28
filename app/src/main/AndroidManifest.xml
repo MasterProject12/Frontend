@@ -11,6 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelFlare">
         <activity android:name=".SplashScreen">
@@ -23,12 +24,15 @@
         <activity android:name=".ReportIncidentActivity"/>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".NotifyIncidentActivity"/>
+        <activity android:name=".SpeedometerActivity"/>
+        <activity android:name=".HomeActivity"/>
         <service android:name=".notification.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".speedometer.LocationService"/>
 
     </application>
 

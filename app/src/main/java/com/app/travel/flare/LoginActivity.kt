@@ -14,11 +14,11 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.loginBtn.setOnClickListener{
-            val intent = Intent(this, ReportIncidentActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
         binding.googleLoginBtn.setOnClickListener{
-            var intent = Intent(this, NotifyIncidentActivity::class.java)
+            var intent = Intent(this, SpeedometerActivity::class.java)
             startActivity(intent)
         }
     }

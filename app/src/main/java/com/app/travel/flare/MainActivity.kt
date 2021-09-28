@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
             var intent = Intent(this, ReportIncidentActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun showMessageDialog(message: String) {

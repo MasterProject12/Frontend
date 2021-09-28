@@ -24,7 +24,7 @@ class Networking {
     private val executor: Executor = Executors.newSingleThreadExecutor()
     private val TAG = Networking::class.java.simpleName
 
-    fun asyncConnection(url: String?, method: String, payload: String, headers: Map<String?, String?>?, responseHandler: ResponseHandler) {
+    fun asyncConnection(url: String?, method: String, payload: String, headers: HashMap<String, String>, responseHandler: ResponseHandler) {
         Log.d(TAG, "asyncConnection")
         executor.execute {
             val url1: URL

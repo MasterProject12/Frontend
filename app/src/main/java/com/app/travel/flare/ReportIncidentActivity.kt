@@ -19,6 +19,10 @@ import com.app.travel.flare.databinding.ActivityReportIncidentBinding
 import com.app.travel.flare.viewModel.ReportIncidentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnSuccessListener
+
+
+
 
 open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -128,10 +132,18 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
             )
         }
         if(mLocationPermissionGranted) {
-            var result = fusedLocationClient.lastLocation.result
-            var lat = result.latitude
-            var long = result.longitude
-            viewModel.reportIncident(incident, lat, long)
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener(this) { location ->
+                    if (location != null) {
+                        Log.d(TAG, "Location returned.")
+                        var lat = ""+location.latitude
+                        var long = ""+location.longitude
+                        viewModel.reportIncident(incident, lat, long)
+                    } else {
+                        Log.d(TAG, "Null location returned.")
+                    }
+                }
+            //var result = fusedLocationClient.lastLocation.result
         }
     }
 }

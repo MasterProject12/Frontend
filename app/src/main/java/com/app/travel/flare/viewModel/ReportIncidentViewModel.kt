@@ -11,17 +11,34 @@ class ReportIncidentViewModel : ViewModel() {
 
     var reportIncidentLiveData = MutableLiveData<Boolean>()
 
-    fun reportIncident(incidentData: String?, lat: Double, long: Double?) {
-        val url = "https://s1db9j47u4.execute-api.us-west-1.amazonaws.com/prod/addrefund"
+    fun reportIncident(incidentData: String?, lat: String, long: String?) {
+        val url = "http://ec2-54-187-127-92.us-west-2.compute.amazonaws.com:8080/incident/add"
+
+        val locParent = JsonObject()
         val obj = JsonObject()
-        obj.addProperty("incident", incidentData)
         obj.addProperty("latitude", lat)
         obj.addProperty("longitude", long)
+        //locParent.add("location",obj)
+
+        val incidentParent = JsonObject()
+        val incident = JsonObject()
+        incident.addProperty("reason", incidentData)
+        incident.addProperty("direction", "north")
+        incident.addProperty("speed", "30mph")
+        //incidentParent.add("incidentData",incident)
+
+        var merge = JsonObject()
+        merge.add("location",obj);
+        merge.add("incidentData",incident)
+
+        var map = HashMap<String,String>()
+        map["Content-Type"] = "application/json"
+
         Networking.INSTANCE.asyncConnection(
             url,
             HttpMethods.POST.name,
-            obj.toString(),
-            null,
+            merge.toString(),
+            map,
             object : Networking.ResponseHandler {
                 override fun onSuccess(response: String?) {
                     Log.d(TAG, "Report Incident Success Response: $response")
