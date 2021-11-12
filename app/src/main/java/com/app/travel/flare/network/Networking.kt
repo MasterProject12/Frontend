@@ -2,7 +2,7 @@ package com.app.travel.flare.network
 
 import android.util.Log
 import com.app.travel.flare.utils.HttpMethods
-import com.app.travel.flare.utils.StringUtils
+import com.app.travel.flare.utils.Utils
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -39,7 +39,7 @@ class Networking {
                         urlConnection!!.setRequestProperty(key, value)
                     }
                 }
-                if (!StringUtils.isNullOrEmpty(payload) && method.equals(HttpMethods.POST.name, ignoreCase = true)) {
+                if (!Utils.isNullOrEmpty(payload) && method.equals(HttpMethods.POST.name, ignoreCase = true)) {
                     urlConnection!!.doOutput = true
                     val bytes = payload.toByteArray(charset("utf-8"))
                     urlConnection.outputStream.write(bytes, 0, bytes.size)

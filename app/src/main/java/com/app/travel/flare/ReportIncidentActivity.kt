@@ -21,9 +21,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnSuccessListener
 
-
-
-
 open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
 
     lateinit var binding : ActivityReportIncidentBinding

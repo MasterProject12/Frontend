@@ -5,8 +5,14 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.24635416666666668" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.25181159420289856" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26721014492753625" />
+        <entry key="app/src/main/res/layout/activity_notify_incident.xml" value="0.25181159420289856" />
+        <entry key="app/src/main/res/layout/activity_report_incident.xml" value="0.2554347826086957" />
         <entry key="app/src/main/res/layout/activity_speedometer.xml" value="0.26721014492753625" />
+        <entry key="app/src/main/res/layout/splash_screen.xml" value="0.25181159420289856" />
+        <entry key="app/src/main/res/menu/menu_items.xml" value="0.4035897435897436" />
+        <entry key="app/src/main/res/menu/menu_items_detail.xml" value="0.4035897435897436" />
       </map>
     </option>
   </component>

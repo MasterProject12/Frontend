@@ -12,7 +12,9 @@ class ReportIncidentViewModel : ViewModel() {
     var reportIncidentLiveData = MutableLiveData<Boolean>()
 
     fun reportIncident(incidentData: String?, lat: String, long: String?) {
-        val url = "http://ec2-54-187-127-92.us-west-2.compute.amazonaws.com:8080/incident/add"
+        //val url = "http://ec2-54-187-127-92.us-west-2.compute.amazonaws.com:8080/incident/add"
+        Log.d("Lat, Long: ", "$lat $long")
+        val url = "http://52.12.113.171:8080/incident/add"
 
         val locParent = JsonObject()
         val obj = JsonObject()
