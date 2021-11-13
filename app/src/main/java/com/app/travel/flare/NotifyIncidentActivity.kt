@@ -7,6 +7,9 @@ import com.app.travel.flare.utils.MyAlertDialog
 import com.app.travel.flare.utils.NotifyIncidentListener
 
 import android.util.Log
+import com.app.travel.flare.utils.Utils
+import java.sql.Time
+import java.time.Instant.now
 
 class NotifyIncidentActivity : AppCompatActivity() , NotifyIncidentListener{
 
@@ -20,6 +23,8 @@ class NotifyIncidentActivity : AppCompatActivity() , NotifyIncidentListener{
 
         Log.d(TAG , "Incident Detected, Showing Alert")
 
+        var time = System.currentTimeMillis()/1000
+        Utils.setLastReportedTime( time, Utils.REPORTED_TIME,this )
         MyAlertDialog().showAlertDialog(this, getString(R.string.incident_notify_title), getString(R.string.incident_notify_msg ),this)
     }
 

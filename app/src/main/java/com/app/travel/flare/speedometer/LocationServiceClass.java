@@ -13,7 +13,6 @@ import com.app.travel.flare.HomeActivity;
 import com.app.travel.flare.SpeedometerActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -21,7 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
-public class LocationService extends Service implements
+public class LocationServiceClass extends Service implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -82,7 +81,6 @@ public class LocationService extends Service implements
 
     @Override
     public void onLocationChanged(Location location) {
-        SpeedometerActivity.locate.dismiss();
         mCurrentLocation = location;
         if (lStart == null) {
             lStart = mCurrentLocation;
@@ -91,15 +89,15 @@ public class LocationService extends Service implements
             lEnd = mCurrentLocation;
 
         //Calling the method below updates the  live values of distance and speed to the TextViews.
-        updateUI();
+        //updateUI();
         //calculating the speed with getSpeed method it returns speed in m/s so we are converting it into kmph
         //speed = location.getSpeed() * 18 / 5;
 
         /// for testing//////
         speed = location.getSpeed() * 18 / 5;
-//        if(speed > 1 && speed < 15){
-//            SpeedometerActivity.handleSpeed();
-//        }
+        if(speed < 10){
+            HomeActivity.Companion.handleSpeed(this);
+        }
     }
 
     @Override
@@ -107,30 +105,30 @@ public class LocationService extends Service implements
     }
 
     public class LocalBinder extends Binder {
-        public LocationService getService() {
-            return LocationService.this;
+        public LocationServiceClass getService() {
+            return LocationServiceClass.this;
         }
     }
 
-
-    private void updateUI() {
-        if (SpeedometerActivity.p == 0) {
-            distance = distance + (lStart.distanceTo(lEnd) / 1000.00);
-            SpeedometerActivity.endTime = System.currentTimeMillis();
-            long diff = SpeedometerActivity.endTime - SpeedometerActivity.startTime;
-            diff = TimeUnit.MILLISECONDS.toMinutes(diff);
-            SpeedometerActivity.time.setText("Total Time: " + diff + " minutes");
-            SpeedometerActivity.trackSpeed = speed;
-            if (speed > 0.0)
-                SpeedometerActivity.speed.setText("Current speed: " + new DecimalFormat("#.##").format(speed) + " km/hr");
-            else
-                SpeedometerActivity.speed.setText(".......");
-
-            SpeedometerActivity.dist.setText(new DecimalFormat("#.###").format(distance) + " Km's.");
-
-            lStart = lEnd;
-        }
-    }
+    //The live feed of Distance and Speed are being set in the method below .
+//    private void updateUI() {
+//        if (SpeedometerActivity.p == 0) {
+//            distance = distance + (lStart.distanceTo(lEnd) / 1000.00);
+//            SpeedometerActivity.endTime = System.currentTimeMillis();
+//            long diff = SpeedometerActivity.endTime - SpeedometerActivity.startTime;
+//            diff = TimeUnit.MILLISECONDS.toMinutes(diff);
+//            SpeedometerActivity.time.setText("Total Time: " + diff + " minutes");
+//            SpeedometerActivity.trackSpeed = speed;
+//            if (speed > 0.0)
+//                SpeedometerActivity.speed.setText("Current speed: " + new DecimalFormat("#.##").format(speed) + " km/hr");
+//            else
+//                SpeedometerActivity.speed.setText(".......");
+//
+//            SpeedometerActivity.dist.setText(new DecimalFormat("#.###").format(distance) + " Km's.");
+//
+//            lStart = lEnd;
+//        }
+//    }
 
     @Override
     public boolean onUnbind(Intent intent) {
