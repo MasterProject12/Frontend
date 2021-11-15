@@ -6,6 +6,7 @@
     <string name="report_incident">Report Incident</string>
     <string name="sign_in">Sign In With Google</string>
     <string name="login_text">Road Incident Reporting App</string>
+    <string name="enter_username">Enter Username</string>
     <string name="enter_email">Enter Email Address</string>
     <string name="enter_password">Enter Password</string>
     <string name="incident_notify_title">An Incident Happened?</string>

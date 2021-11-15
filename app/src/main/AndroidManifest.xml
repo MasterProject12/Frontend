@@ -27,10 +27,18 @@
         <activity android:name=".NotifyIncidentActivity"/>
         <activity android:name=".SpeedometerActivity" android:parentActivityName=".HomeActivity"/>
         <activity android:name=".HomeActivity"/>
+        <activity android:name=".RegisterActivity" android:parentActivityName=".LoginActivity"/>
+
         <service android:name=".notification.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
         <service android:name=".speedometer.LocationService"/>

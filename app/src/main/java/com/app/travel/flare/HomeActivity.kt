@@ -1,24 +1,53 @@
 package com.app.travel.flare
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.location.Address
+import android.media.session.MediaSession
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.app.travel.flare.speedometer.LocationService
 import com.app.travel.flare.speedometer.LocationService.LocalBinder
 import com.app.travel.flare.utils.Utils
+import com.app.travel.flare.viewModel.HomeActivityViewModel
+import com.app.travel.flare.viewModel.ReportIncidentViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
+import android.location.Geocoder
+import java.util.*
+
 
 class HomeActivity : AppCompatActivity() {
 
+    private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+    var mLocationPermissionGranted : Boolean = false
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var viewModel : HomeActivityViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_home)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        viewModel = ViewModelProvider(this).get(HomeActivityViewModel::class.java)
+        getLocationPermission()
+
         findViewById<Button>(R.id.reportButton).setOnClickListener{
             var intent = Intent(this, ReportIncidentActivity::class.java)
             startActivity(intent)
@@ -27,8 +56,87 @@ class HomeActivity : AppCompatActivity() {
             var intent = Intent(this, SpeedometerActivity::class.java)
             startActivity(intent)
         }
+        findViewById<ImageView>(R.id.shareLocationIV).setOnClickListener{
+            findCity()
+        }
+
         Utils.cacheData(true,Utils.IS_LOGGED_IN,this)
         //bindService()
+    }
+
+
+
+    private fun findCity(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+        if(mLocationPermissionGranted) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener(this) { location ->
+                    if (location != null) {
+                        Log.d(ReportIncidentActivity.TAG, "Location returned.")
+                        var lat = location.latitude
+                        var long = location.longitude
+
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        val addresses: List<Address> = geocoder.getFromLocation(lat, long, 1)
+                        val cityName: String = addresses[0].getAddressLine(0)
+
+                        var result: List<String> = cityName.split(",").map { it.trim() }
+                        var city = result[1]
+                        Log.d("HomeActivity", "City name: " + result[result.size -3])
+                        viewModel.subscribe(city)
+                    } else {
+                        Log.d(ReportIncidentActivity.TAG, "Null location returned.")
+                    }
+                }
+        }
+    }
+
+    private fun getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+            Log.d(MainActivity.TAG, "mLocationPermissionGranted : $mLocationPermissionGranted")
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        mLocationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    mLocationPermissionGranted = true
+                } else {
+                    finish()
+                }
+                Log.d(MainActivity.TAG, "mLocationPermissionGranted : $mLocationPermissionGranted")
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

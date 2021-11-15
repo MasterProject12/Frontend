@@ -9,19 +9,19 @@ import androidx.lifecycle.ViewModelProvider
 import com.app.travel.flare.databinding.ActivityMainBinding
 import com.app.travel.flare.notification.INCIDENT_DETAIL_MESSAGE
 import com.app.travel.flare.notification.INCIDENT_PUSH
-import com.app.travel.flare.viewModel.MainActivityViewModel
+import com.app.travel.flare.viewModel.HomeActivityViewModel
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel : MainActivityViewModel
+    lateinit var viewModel : HomeActivityViewModel
     lateinit var binding : ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         if (intent != null) {
