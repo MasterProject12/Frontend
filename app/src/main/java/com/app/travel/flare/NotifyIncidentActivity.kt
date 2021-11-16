@@ -4,14 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.app.travel.flare.utils.MyAlertDialog
-import com.app.travel.flare.utils.NotifyIncidentListener
+import com.app.travel.flare.utils.HandleAlertListener
 
 import android.util.Log
 import com.app.travel.flare.utils.Utils
-import java.sql.Time
-import java.time.Instant.now
 
-class NotifyIncidentActivity : AppCompatActivity() , NotifyIncidentListener{
+class NotifyIncidentActivity : AppCompatActivity() , HandleAlertListener{
 
     companion object{
         var TAG : String = NotifyIncidentActivity::class.java.name

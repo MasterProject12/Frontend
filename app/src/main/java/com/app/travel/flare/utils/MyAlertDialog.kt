@@ -4,14 +4,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.*
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import com.app.travel.flare.R
 
 class MyAlertDialog : OnClickListener {
     lateinit var alert : AlertDialog
-    lateinit var listener : NotifyIncidentListener
+    lateinit var listener : HandleAlertListener
 
-     fun showAlertDialog(context: Context, title: String, msg : String, listener : NotifyIncidentListener){
+     fun showAlertDialog(context: Context, title: String, msg : String, listener : HandleAlertListener){
         this.listener = listener
         val dialogBuilder = context?.let { AlertDialog.Builder(it) }
         dialogBuilder?.setMessage(msg)

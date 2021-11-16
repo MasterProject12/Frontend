@@ -11,6 +11,10 @@
     <string name="enter_password">Enter Password</string>
     <string name="incident_notify_title">An Incident Happened?</string>
     <string name="incident_notify_msg">Do you want to report the incident?</string>
+
+    <string name="location_share_title">Location Sharing</string>
+    <string name="location_share_msg">Share your location to get notified about the incidents nearby</string>
+
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="logout">Logout</string>

@@ -1,6 +1,6 @@
 package com.app.travel.flare.utils
 
-interface NotifyIncidentListener {
+interface HandleAlertListener {
 
     fun handlePositiveBtn()
     fun handleNegativeBtn()

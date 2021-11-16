@@ -1,15 +1,11 @@
 package com.app.travel.flare
 
 import android.Manifest
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.location.Address
-import android.media.session.MediaSession
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,26 +15,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.app.travel.flare.speedometer.LocationService
-import com.app.travel.flare.speedometer.LocationService.LocalBinder
 import com.app.travel.flare.utils.Utils
 import com.app.travel.flare.viewModel.HomeActivityViewModel
-import com.app.travel.flare.viewModel.ReportIncidentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import android.location.Geocoder
+import com.app.travel.flare.utils.HandleAlertListener
+import com.app.travel.flare.utils.MyAlertDialog
 import java.util.*
 
-
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), HandleAlertListener {
 
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
     var mLocationPermissionGranted : Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var viewModel : HomeActivityViewModel
+    private lateinit var alertDialog: MyAlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +49,17 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
         findViewById<ImageView>(R.id.shareLocationIV).setOnClickListener{
-            findCity()
+            showAlertDialog()
         }
 
         Utils.cacheData(true,Utils.IS_LOGGED_IN,this)
         //bindService()
     }
 
-
+    private fun showAlertDialog(){
+        alertDialog = MyAlertDialog()
+        alertDialog.showAlertDialog(this, getString(R.string.location_share_title), getString(R.string.location_share_msg ),this)
+    }
 
     private fun findCity(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -163,6 +158,15 @@ class HomeActivity : AppCompatActivity() {
 //            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 //            startActivity(intent)
         }
+    }
+
+    override fun handlePositiveBtn() {
+        alertDialog.dismissAlertDialog()
+        findCity()
+    }
+
+    override fun handleNegativeBtn() {
+        alertDialog.dismissAlertDialog()
     }
 
 //    var myService: LocationService? = null

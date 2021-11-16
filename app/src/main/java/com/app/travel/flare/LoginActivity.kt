@@ -24,15 +24,15 @@ class LoginActivity : AppCompatActivity() {
         model = ViewModelProvider(this).get(LoginActivityViewModel::class.java)
 
         binding.loginBtn.setOnClickListener{
-//            val email = binding.emailLogin.text.toString()
-//            val pwd = binding.passwordLogin.text.toString()
-//            model.loginUser(email,pwd)
+            val email = binding.emailLogin.text.toString()
+            val pwd = binding.passwordLogin.text.toString()
+            model.loginUser(email,pwd)
 
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                    Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
+//            val intent = Intent(this, HomeActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
+//                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
+//                    Intent.FLAG_ACTIVITY_NEW_TASK
+//            startActivity(intent)
         }
 
         binding.registerTV.setOnClickListener{
