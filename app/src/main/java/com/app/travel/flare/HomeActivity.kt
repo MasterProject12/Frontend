@@ -20,8 +20,10 @@ import com.app.travel.flare.viewModel.HomeActivityViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.location.Geocoder
+import android.widget.Toast
 import com.app.travel.flare.utils.HandleAlertListener
 import com.app.travel.flare.utils.MyAlertDialog
+import com.app.travel.flare.utils.MyProgressDialog
 import java.util.*
 
 class HomeActivity : AppCompatActivity(), HandleAlertListener {
@@ -31,6 +33,7 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var viewModel : HomeActivityViewModel
     private lateinit var alertDialog: MyAlertDialog
+    private lateinit var progressDialog : MyProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,24 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
         }
 
         Utils.cacheData(true,Utils.IS_LOGGED_IN,this)
-        //bindService()
+
+        viewModel.subscribeCityLiveData.observe(this, {
+                aBoolean ->
+            if (aBoolean) {
+                Toast.makeText(
+                    this,
+                    "Location has been  shared successfully",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Location sharing failed. Please try again later.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            progressDialog.dismissProgressDialog()
+        })
     }
 
     private fun showAlertDialog(){
@@ -93,6 +113,17 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
                     }
                 }
         }
+    }
+
+    override fun handlePositiveBtn() {
+        alertDialog.dismissAlertDialog()
+        progressDialog = MyProgressDialog()
+        progressDialog.showProgressDialog(this, "Sending...Please wait","")
+        findCity()
+    }
+
+    override fun handleNegativeBtn() {
+        alertDialog.dismissAlertDialog()
     }
 
     private fun getLocationPermission() {
@@ -158,15 +189,6 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
 //            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 //            startActivity(intent)
         }
-    }
-
-    override fun handlePositiveBtn() {
-        alertDialog.dismissAlertDialog()
-        findCity()
-    }
-
-    override fun handleNegativeBtn() {
-        alertDialog.dismissAlertDialog()
     }
 
 //    var myService: LocationService? = null

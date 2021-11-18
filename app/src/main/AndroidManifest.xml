@@ -42,6 +42,8 @@
             </intent-filter>
         </service>
         <service android:name=".speedometer.LocationService"/>
+        <service android:enabled="true"
+            android:name=".notification.IncomingNotificationService"/>
 
     </application>
 

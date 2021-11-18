@@ -1,6 +1,7 @@
 package com.app.travel.flare.viewModel
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.app.travel.flare.network.Networking
 import com.app.travel.flare.utils.HttpMethods
@@ -11,6 +12,8 @@ import com.google.gson.JsonObject
 class HomeActivityViewModel : ViewModel() {
 
     lateinit var token:String
+    var subscribeCityLiveData = MutableLiveData<Boolean>()
+
     init{
         fetchToken()
     }
@@ -41,11 +44,13 @@ class HomeActivityViewModel : ViewModel() {
             map,
             object : Networking.ResponseHandler {
                 override fun onSuccess(response: String?) {
-                    Log.d(TAG, "Registration Success Response: $response")
+                    Log.d(TAG, "Subscribe Success : $response")
+                    subscribeCityLiveData.postValue(true)
                 }
 
                 override fun onFailure(failureType: Networking.ResponseHandler.FailureType?, responseCode: Int, reason: String?) {
-                    Log.d(TAG, "Registration Failed: $failureType")
+                    Log.d(TAG, "Subscribe Failed: $failureType")
+                    subscribeCityLiveData.postValue(false)
                 }
             })
     }
