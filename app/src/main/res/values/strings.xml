@@ -3,7 +3,7 @@
     <string name="location_permission_text">Location Permission</string>
     <string name="req_location_permission">Location Permission Required</string>
     <string name="report">Report</string>
-    <string name="report_incident">Report Incident</string>
+    <string name="report_incident">REPORT INCIDENT</string>
     <string name="sign_in">Sign In With Google</string>
     <string name="login_text">Road Incident Reporting App</string>
     <string name="enter_username">Enter Username</string>
@@ -18,4 +18,5 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="logout">Logout</string>
+    <string name="location_share">LOCATION</string>
 </resources>

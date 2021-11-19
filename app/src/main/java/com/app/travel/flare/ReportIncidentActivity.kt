@@ -1,6 +1,7 @@
 package com.app.travel.flare
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -36,6 +37,7 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
         binding.reportBtn.setOnClickListener(this)
         viewModel = ViewModelProvider(this).get(ReportIncidentViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        (this as AppCompatActivity?)!!.supportActionBar!!.title = "Report Incident"
 
         viewModel.reportIncidentLiveData.observe(this,
             Observer<Boolean> { aBoolean ->
@@ -55,6 +57,22 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
         getLocationPermission()
         createList()
         setUpSpinner()
+        var cityName : String = ""
+        if (intent != null) {
+            if (intent.getStringExtra("CityName") != null) {
+                cityName = intent.getStringExtra("CityName")!!
+            }
+        }
+        binding.shareFab.setOnClickListener{
+            val data = "An incident happened at : $cityName"
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, data)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
     }
 
     private fun getLocationPermission() {

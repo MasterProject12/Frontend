@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,7 +18,7 @@ import com.app.travel.flare.viewModel.HomeActivityViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.location.Geocoder
-import android.widget.Toast
+import android.widget.*
 import com.app.travel.flare.utils.HandleAlertListener
 import com.app.travel.flare.utils.MyAlertDialog
 import com.app.travel.flare.utils.MyProgressDialog
@@ -34,6 +32,9 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
     private lateinit var viewModel : HomeActivityViewModel
     private lateinit var alertDialog: MyAlertDialog
     private lateinit var progressDialog : MyProgressDialog
+    private lateinit var cityInfoTextView : TextView
+    private lateinit var cityName : String
+    private lateinit var cityInfo : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,19 +44,25 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
         viewModel = ViewModelProvider(this).get(HomeActivityViewModel::class.java)
         getLocationPermission()
 
-        findViewById<Button>(R.id.reportButton).setOnClickListener{
-            var intent = Intent(this, ReportIncidentActivity::class.java)
-            startActivity(intent)
-        }
-        findViewById<Button>(R.id.speedoMeterButton).setOnClickListener{
+        (this as AppCompatActivity?)!!.supportActionBar!!.title = "Dashboard"
+
+        findViewById<RelativeLayout>(R.id.trackSpeedRL).setOnClickListener{
             var intent = Intent(this, SpeedometerActivity::class.java)
             startActivity(intent)
         }
-        findViewById<ImageView>(R.id.shareLocationIV).setOnClickListener{
+        findViewById<RelativeLayout>(R.id.relativeLayout).setOnClickListener{
             showAlertDialog()
         }
+        findViewById<RelativeLayout>(R.id.reportRL).setOnClickListener{
+            var intent = Intent(this, ReportIncidentActivity::class.java)
+            intent.putExtra("CityName" , cityInfo)
+            startActivity(intent)
+        }
+
+        cityInfoTextView = findViewById(R.id.locationInfoTV)
 
         Utils.cacheData(true,Utils.IS_LOGGED_IN,this)
+        findCity()
 
         viewModel.subscribeCityLiveData.observe(this, {
                 aBoolean ->
@@ -102,12 +109,15 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
 
                         val geocoder = Geocoder(this, Locale.getDefault())
                         val addresses: List<Address> = geocoder.getFromLocation(lat, long, 1)
-                        val cityName: String = addresses[0].getAddressLine(0)
+                        cityInfo  = addresses[0].getAddressLine(0)
 
-                        var result: List<String> = cityName.split(",").map { it.trim() }
-                        var city = result[1]
-                        Log.d("HomeActivity", "City name: " + result[result.size -3])
-                        viewModel.subscribe(city)
+                        cityInfoTextView.text = cityInfo
+
+                        var result: List<String> = cityInfo.split(",").map { it.trim() }
+
+                        this@HomeActivity.cityName = result[1]
+//                        Log.d("HomeActivity", "City name: " + result[result.size -3])
+//                        viewModel.subscribe(city)
                     } else {
                         Log.d(ReportIncidentActivity.TAG, "Null location returned.")
                     }
@@ -119,7 +129,11 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
         alertDialog.dismissAlertDialog()
         progressDialog = MyProgressDialog()
         progressDialog.showProgressDialog(this, "Sending...Please wait","")
-        findCity()
+
+        val cityName = cityInfoTextView.text.toString()
+        var result: List<String> = cityName.split(",").map { it.trim() }
+        var city = result[1]
+        viewModel.subscribe(city)
     }
 
     override fun handleNegativeBtn() {
