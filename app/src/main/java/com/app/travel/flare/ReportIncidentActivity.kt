@@ -117,13 +117,14 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setUpSpinner() {
-
-
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
             android.R.layout.simple_spinner_item,
             incidentList
         )
+
+        //var adapter = IncidentTypeAdapter(this, 111 , incidentList)
+
         binding.incidentSpinner.setAdapter(arrayAdapter)
     }
 
