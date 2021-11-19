@@ -54,6 +54,8 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
                 }
             })
 
+
+
         getLocationPermission()
         createList()
         setUpSpinner()
@@ -115,6 +117,8 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setUpSpinner() {
+
+
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
             android.R.layout.simple_spinner_item,
