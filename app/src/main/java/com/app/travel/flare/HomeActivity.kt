@@ -47,7 +47,10 @@ class HomeActivity : AppCompatActivity(), HandleAlertListener {
         (this as AppCompatActivity?)!!.supportActionBar!!.title = "Dashboard"
 
         findViewById<RelativeLayout>(R.id.trackSpeedRL).setOnClickListener{
-            var intent = Intent(this, SpeedometerActivity::class.java)
+//            var intent = Intent(this, SpeedometerActivity::class.java)
+//            startActivity(intent)
+
+            var intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }
         findViewById<RelativeLayout>(R.id.relativeLayout).setOnClickListener{
