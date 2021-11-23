@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.app.travel.flare.fragments.DashboardFragment"
+        android:label="DashboardFragment" />
+    <fragment
+        android:id="@+id/reportIncidentId"
+        android:name="com.app.travel.flare.fragments.ReportIncidentFragment"
+        android:label="ReportIncidentFragment" />
+    <fragment
+        android:id="@+id/subscribeToCityId"
+        android:name="com.app.travel.flare.fragments.LocationShareFragment"
+        android:label="LocationShareFragment" />
+    <activity
+        android:id="@+id/trackGeofenceId"
+        android:name="com.app.travel.flare.MapsActivity"
+        android:label="MapsActivity" />
+</navigation>

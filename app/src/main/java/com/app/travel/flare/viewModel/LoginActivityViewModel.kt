@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.app.travel.flare.network.Networking
 import com.app.travel.flare.utils.HttpMethods
+import com.app.travel.flare.utils.Utils
+import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 
 class LoginActivityViewModel : ViewModel() {
 
-    var loginResultLiveData = MutableLiveData<Boolean>()
+    var loginResultLiveData = MutableLiveData<String>()
 
     fun loginUser(email: String?, password: String?) {
         val url = "https://1bgkyjhncb.execute-api.us-west-2.amazonaws.com/prod/authenticate"
@@ -29,15 +32,18 @@ class LoginActivityViewModel : ViewModel() {
             object : Networking.ResponseHandler {
                 override fun onSuccess(response: String?) {
                     Log.d(TAG, "Login Success Response: $response")
-                    loginResultLiveData.postValue(true)
+
+                    loginResultLiveData.postValue(response)
                 }
 
                 override fun onFailure(failureType: Networking.ResponseHandler.FailureType?, responseCode: Int, reason: String?) {
                     Log.d(TAG, "Login Failed: $failureType")
-                    loginResultLiveData.postValue(false)
+                    loginResultLiveData.postValue(reason)
                 }
             })
     }
+
+
 
     companion object{
         val TAG : String = LoginActivityViewModel::class.java.name

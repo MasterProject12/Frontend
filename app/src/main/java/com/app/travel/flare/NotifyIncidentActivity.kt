@@ -27,8 +27,8 @@ class NotifyIncidentActivity : AppCompatActivity() , HandleAlertListener{
     }
 
     override fun handlePositiveBtn() {
-        var intent = Intent(this, ReportIncidentActivity::class.java)
-        startActivity(intent)
+//        var intent = Intent(this, ReportIncidentActivity::class.java)
+//        startActivity(intent)
     }
 
     override fun handleNegativeBtn() {

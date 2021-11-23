@@ -179,15 +179,15 @@ public class SpeedometerActivity extends AppCompatActivity {
         });
     }
 
-    public void handleSpeed(){
-        long time = System.currentTimeMillis()/1000;
-        long lastTime = Utils.getLastReportedTime(Utils.REPORTED_TIME,MyApplication.getContext());
-        Log.d("Speedometer: ", "Time: "+time + "lastTime: "+ lastTime);
-        if((time - lastTime) > 1800 ){
-            Intent intent = new Intent(MyApplication.getContext(), NotifyIncidentActivity.class);
-            MyApplication.getContext().startActivity(intent);
-        }
-    }
+//    public void handleSpeed(){
+//        long time = System.currentTimeMillis()/1000;
+//        long lastTime = Utils.getLastReportedTime(Utils.REPORTED_TIME,MyApplication.getContext());
+//        Log.d("Speedometer: ", "Time: "+time + "lastTime: "+ lastTime);
+//        if((time - lastTime) > 1800 ){
+//            Intent intent = new Intent(MyApplication.getContext(), NotifyIncidentActivity.class);
+//            MyApplication.getContext().startActivity(intent);
+//        }
+//    }
 
     //This method leads you to the alert dialog box.
     void checkGps() {

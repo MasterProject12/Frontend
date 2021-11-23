@@ -9,7 +9,6 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.app.travel.flare.HomeActivity;
 import com.app.travel.flare.SpeedometerActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;

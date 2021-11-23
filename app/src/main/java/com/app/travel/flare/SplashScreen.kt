@@ -21,7 +21,7 @@ class SplashScreen : AppCompatActivity() {
         Handler().postDelayed({
 
             if(Utils.getCacheData(Utils.IS_LOGGED_IN,this)){
-                val intent = Intent(this, HomeActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }else{
                 val intent = Intent(this, LoginActivity::class.java)

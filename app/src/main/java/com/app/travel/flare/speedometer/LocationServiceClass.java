@@ -9,16 +9,11 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.app.travel.flare.HomeActivity;
-import com.app.travel.flare.SpeedometerActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
-import java.text.DecimalFormat;
-import java.util.concurrent.TimeUnit;
 
 public class LocationServiceClass extends Service implements
         LocationListener,
@@ -95,9 +90,9 @@ public class LocationServiceClass extends Service implements
 
         /// for testing//////
         speed = location.getSpeed() * 18 / 5;
-        if(speed < 10){
-            HomeActivity.Companion.handleSpeed(this);
-        }
+//        if(speed < 10){
+//            HomeActivity.Companion.handleSpeed(this);
+//        }
     }
 
     @Override

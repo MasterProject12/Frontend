@@ -32,7 +32,6 @@ class RegisterActivity : AppCompatActivity() {
         model.registerResultLiveData.observe(this,
             Observer<Boolean> { aBoolean ->
                 if (aBoolean) {
-                    Log.d(ReportIncidentActivity.TAG, "Registration successfully")
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                 } else {

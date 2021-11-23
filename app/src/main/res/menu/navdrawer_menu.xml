@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/reportIncidentId"
+        android:title="Report Incident" />
+    <item
+        android:id="@+id/subscribeToCityId"
+        android:title="Subscribe To City" />
+    <item
+        android:id="@+id/trackGeofenceId"
+        android:title="Track Geofence" />
+</menu>

@@ -1,70 +1,55 @@
-package com.app.travel.flare
+package com.app.travel.flare.fragments
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CompoundButton
-import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.app.travel.flare.databinding.ActivityReportIncidentBinding
+import com.app.travel.flare.R
+import com.app.travel.flare.databinding.FragmentReportIncidentBinding
 import com.app.travel.flare.viewModel.ReportIncidentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
 
-open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
+class ReportIncidentFragment : Fragment(){
 
-    lateinit var binding : ActivityReportIncidentBinding
+    lateinit var binding : FragmentReportIncidentBinding
+    lateinit var viewModel : ReportIncidentViewModel
     var incidentList : ArrayList<String> = ArrayList()
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
     var mLocationPermissionGranted : Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    lateinit var viewModel : ReportIncidentViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_report_incident)
-        binding.reportBtn.setOnClickListener(this)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_report_incident, container, false)
+
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Report Incident"
+
         viewModel = ViewModelProvider(this).get(ReportIncidentViewModel::class.java)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        (this as AppCompatActivity?)!!.supportActionBar!!.title = "Report Incident"
-
-        viewModel.reportIncidentLiveData.observe(this,
-            Observer<Boolean> { aBoolean ->
-                if (aBoolean) {
-                    Log.d(TAG, "Incident reported successfully")
-                    Toast.makeText(this, "Incident reported successfully", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Incident reporting failed",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
-
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
 
         getLocationPermission()
         createList()
         setUpSpinner()
-        var cityName : String = ""
-        if (intent != null) {
-            if (intent.getStringExtra("CityName") != null) {
-                cityName = intent.getStringExtra("CityName")!!
-            }
-        }
+
+        var cityName = "Sunnyvale"
         binding.shareFab.setOnClickListener{
             val data = "An incident happened at : $cityName"
             val sendIntent: Intent = Intent().apply {
@@ -75,19 +60,40 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
         }
+
+        viewModel.reportIncidentLiveData.observe(activity as AppCompatActivity,
+            Observer<Boolean> { aBoolean ->
+                if (aBoolean) {
+                    Log.d("ReportIncidentFragment", "Incident reported successfully")
+                    Toast.makeText(activity, "Incident reported successfully", Toast.LENGTH_LONG)
+                        .show()
+                } else {
+                    Toast.makeText(
+                        activity,
+                        "Incident reporting failed",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+
+        binding.reportBtn.setOnClickListener{
+            reportIncident()
+        }
+
+        return binding.root
     }
 
     private fun getLocationPermission() {
         if (ContextCompat.checkSelfPermission(
-                this,
+                activity as AppCompatActivity,
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
-                == PackageManager.PERMISSION_GRANTED) {
+            == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
-            Log.d(MainActivity.TAG, "mLocationPermissionGranted : $mLocationPermissionGranted")
+            Log.d("TAG", "mLocationPermissionGranted : $mLocationPermissionGranted")
         } else {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                activity as AppCompatActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
         }
@@ -108,22 +114,21 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
                     mLocationPermissionGranted = true
-                } else {
-                    finish()
+//                } else {
+//                    finish()
+//                }
+                    Log.d("TAG", "mLocationPermissionGranted : $mLocationPermissionGranted")
                 }
-                Log.d(MainActivity.TAG, "mLocationPermissionGranted : $mLocationPermissionGranted")
             }
         }
     }
 
     private fun setUpSpinner() {
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            this,
+            activity as AppCompatActivity,
             android.R.layout.simple_spinner_item,
             incidentList
         )
-
-        //var adapter = IncidentTypeAdapter(this, 111 , incidentList)
 
         binding.incidentSpinner.setAdapter(arrayAdapter)
     }
@@ -135,35 +140,30 @@ open class ReportIncidentActivity : AppCompatActivity(), View.OnClickListener {
         incidentList.add("Construction Site")
     }
 
-    companion object{
-        val TAG: String = ReportIncidentActivity::class.java.name
-    }
-
-    override fun onClick(view: View?) {
+    fun reportIncident() {
         val incident = incidentList.get(binding.incidentSpinner.selectedItemPosition)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(
-                this,
+        if (ActivityCompat.checkSelfPermission(activity as AppCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                activity as AppCompatActivity,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                activity as AppCompatActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
         }
         if(mLocationPermissionGranted) {
             fusedLocationClient.lastLocation
-                .addOnSuccessListener(this) { location ->
+                .addOnSuccessListener(activity as AppCompatActivity) { location ->
                     if (location != null) {
-                        Log.d(TAG, "Location returned.")
+                        Log.d("TAG", "Location returned.")
                         var lat = ""+location.latitude
                         var long = ""+location.longitude
                         viewModel.reportIncident(incident, lat, long)
                     } else {
-                        Log.d(TAG, "Null location returned.")
+                        Log.d("TAG", "Null location returned.")
                     }
                 }
-            //var result = fusedLocationClient.lastLocation.result
         }
     }
 }

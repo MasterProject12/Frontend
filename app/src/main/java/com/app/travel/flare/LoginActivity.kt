@@ -12,6 +12,8 @@ import com.app.travel.flare.databinding.ActivityLoginBinding
 import com.app.travel.flare.utils.Utils
 import com.app.travel.flare.viewModel.LoginActivityViewModel
 import com.app.travel.flare.viewModel.RegisterActivityViewModel
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 
 class LoginActivity : AppCompatActivity() {
 
@@ -28,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
             val pwd = binding.passwordLogin.text.toString()
             model.loginUser(email,pwd)
 
-//            val intent = Intent(this, HomeActivity::class.java)
+//            val intent = Intent(this, MainActivity::class.java)
 //            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
 //                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
 //                    Intent.FLAG_ACTIVITY_NEW_TASK
@@ -41,9 +43,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         model.loginResultLiveData.observe(this,
-            Observer<Boolean> { aBoolean ->
-                if (aBoolean) {
-                    val intent = Intent(this, HomeActivity::class.java)
+            Observer<String> { response ->
+                if (response != null) {
+                    setUpAccountDetails(response)
+                    val intent = Intent(this, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
                             Intent.FLAG_ACTIVITY_CLEAR_TASK or
                             Intent.FLAG_ACTIVITY_NEW_TASK
@@ -56,5 +59,11 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                 }
             })
+    }
+
+    private fun setUpAccountDetails(response: String) {
+        val jsonObject = JsonParser.parseString(response) as JsonObject
+        Utils.setStringData(jsonObject["email_id"].asString,Utils.EMAIL_ID,this)
+        Utils.setStringData(jsonObject["user_name"].asString,Utils.USER_NAME,this)
     }
 }
