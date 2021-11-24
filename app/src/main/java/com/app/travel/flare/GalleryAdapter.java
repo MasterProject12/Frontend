@@ -42,13 +42,13 @@ public class GalleryAdapter extends BaseAdapter
     }
 
     public Integer[] mImageIds = {
-            R.drawable.logo,
-            R.drawable.report,
             R.drawable.image_1,
             R.drawable.image_2,
-            R.drawable.report,
-            R.drawable.report,
-            R.drawable.report
+            R.drawable.image_1,
+            R.drawable.image_2,
+            R.drawable.image_1,
+            R.drawable.image_2,
+            R.drawable.image_1
     };
 
 }

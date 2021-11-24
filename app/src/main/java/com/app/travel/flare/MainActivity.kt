@@ -18,6 +18,7 @@ import com.app.travel.flare.viewModel.MainActivityViewModel
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.nav_header.view.*
 
 class MainActivity : AppCompatActivity(){
@@ -44,18 +45,19 @@ class MainActivity : AppCompatActivity(){
 
         Utils.cacheData(true,Utils.IS_LOGGED_IN,this)
         NavigationUI.setupWithNavController(binding.navView, navController)
+        binding.navView.itemIconTintList = null
 
         var username = Utils.getStringData(Utils.USER_NAME,this)
         var email = Utils.getStringData(Utils.EMAIL_ID,this)
         headerView = binding.navView.getHeaderView(0)
         headerView.nameTv.text = username
         headerView.emailTV.text = email
-        var avatar = headerView.avatar
-        Glide
-            .with(this)
-            .load(R.drawable.logo)
-            .centerCrop()
-            .into(avatar)
+//        var avatar = headerView.avatar
+//        Glide
+//            .with(this)
+//            .load(R.drawable.logo_header)
+//            .centerCrop()
+//            .into(avatar)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -4,11 +4,14 @@
 
     <item
         android:id="@+id/reportIncidentId"
+        android:icon="@drawable/report_nav"
         android:title="Report Incident" />
     <item
         android:id="@+id/subscribeToCityId"
+        android:icon="@drawable/subscribe_nav"
         android:title="Subscribe To City" />
     <item
         android:id="@+id/trackGeofenceId"
+        android:icon="@drawable/navigation_nav"
         android:title="Track Geofence" />
 </menu>
