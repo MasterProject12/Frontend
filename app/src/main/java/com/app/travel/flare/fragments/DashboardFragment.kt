@@ -15,22 +15,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.app.travel.flare.GalleryAdapter
-import com.app.travel.flare.MainActivity
-import com.app.travel.flare.R
-import com.app.travel.flare.databinding.FragmentDashboardBinding
 import com.app.travel.flare.utils.Utils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.FirebaseAuth
 import java.util.*
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-
+import androidx.recyclerview.widget.GridLayoutManager
+import com.app.travel.flare.*
+import com.app.travel.flare.databinding.DashboardMainFragmentBinding
+import com.smarteist.autoimageslider.SliderView
+import kotlin.collections.ArrayList
 
 class DashboardFragment : Fragment(){
 
-    lateinit var binding : FragmentDashboardBinding
+    lateinit var binding : DashboardMainFragmentBinding
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
     var mLocationPermissionGranted : Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -42,25 +39,67 @@ class DashboardFragment : Fragment(){
         const val TAG : String = "DashboardFragment"
     }
 
+    var mImageIds = arrayOf<Int>(
+        R.drawable.image_1,
+        R.drawable.image_2,
+        R.drawable.image_1,
+        R.drawable.image_2,
+        R.drawable.image_1,
+        R.drawable.image_2,
+        R.drawable.image_1
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.dashboard_main_fragment, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as AppCompatActivity)
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Travel Flare"
         cityInfoTextView = binding.locationDisplayTV
 
         var galleryImageAdapter= GalleryAdapter(activity as MainActivity);
-        binding.imageGallery.setAdapter(galleryImageAdapter);
+//        binding.imageGallery.setAdapter(galleryImageAdapter);
+//
+//        binding.imageGallery.setOnItemClickListener(OnItemClickListener { parent, v, position, id -> // show the selected Image
+//            binding.gallerySelectedImage.setImageResource(galleryImageAdapter.mImageIds[position])
+//        })
 
-        binding.imageGallery.setOnItemClickListener(OnItemClickListener { parent, v, position, id -> // show the selected Image
-            binding.gallerySelectedImage.setImageResource(galleryImageAdapter.mImageIds[position])
-        })
+        val sliderDataArrayList: ArrayList<SliderData> = ArrayList()
+
+        val sliderView: SliderView = binding.slider
+        for (i in mImageIds){
+            sliderDataArrayList.add(SliderData(i))
+        }
+
+        val adapter = SliderAdapter(activity as MainActivity, sliderDataArrayList,getImageList())
+
+        sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
+        sliderView.setSliderAdapter(adapter)
+
+        sliderView.scrollTimeInSec = 3
+        sliderView.isAutoCycle = true
+        sliderView.startAutoCycle()
+
+        binding.incidentTypeRV.adapter = IncidentReportTypeAdapter(movieGenreList)
+        val gridLayoutManager = GridLayoutManager(activity as AppCompatActivity,2)
+        binding.incidentTypeRV.layoutManager=gridLayoutManager
+        binding.incidentTypeRV.hasFixedSize()
 
         return binding.root
+    }
+
+    fun getImageList():List<Int>{
+        var list : ArrayList<Int> = ArrayList();
+        list.add(R.drawable.image_1)
+        list.add(R.drawable.crash_2)
+        list.add(R.drawable.crash_1)
+        list.add(R.drawable.traffic_1)
+        list.add(R.drawable.traffic_2)
+
+        return list
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

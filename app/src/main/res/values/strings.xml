@@ -15,8 +15,12 @@
     <string name="location_share_title">Location Sharing</string>
     <string name="location_share_msg">Share your location to get notified about the incidents nearby</string>
 
+    <string name="report_incident_title">Location Sharing</string>
+    <string name="report_incident_msg">Share your location to get notified about the incidents nearby</string>
+
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="logout">Logout</string>
     <string name="location_share">LOCATION</string>
+    <string name="subscribe_text">You have been successfully subscribed to %1$s. Now, you will receive the incident alerts around the subscribed area.</string>
 </resources>

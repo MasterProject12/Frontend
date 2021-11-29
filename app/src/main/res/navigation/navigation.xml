@@ -20,4 +20,8 @@
         android:id="@+id/trackGeofenceId"
         android:name="com.app.travel.flare.MapsActivity"
         android:label="MapsActivity" />
+    <activity
+        android:id="@+id/speedometerActivity"
+        android:name="com.app.travel.flare.SpeedometerActivity"
+        android:label="SpeedometerActivity" />
 </navigation>

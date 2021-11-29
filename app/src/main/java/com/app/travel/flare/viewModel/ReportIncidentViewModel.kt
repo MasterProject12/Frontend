@@ -22,7 +22,6 @@ class ReportIncidentViewModel : ViewModel() {
         obj.addProperty("longitude", long)
         //locParent.add("location",obj)
 
-        val incidentParent = JsonObject()
         val incident = JsonObject()
         incident.addProperty("reason", incidentData)
         incident.addProperty("direction", "north")
