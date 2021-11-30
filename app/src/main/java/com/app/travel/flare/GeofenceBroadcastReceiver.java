@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.app.travel.flare.IncidentMetaData.IncidentInfo;
 
 import java.util.List;
 
@@ -41,8 +42,15 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         }
 
         List<Geofence> geofenceList= geofencingEvent.getTriggeringGeofences();
+        StringBuilder reasonStr = new StringBuilder("");
+
         for (Geofence geofence: geofenceList){
             Log.d(TAG, "onReceive: " + geofence.getRequestId());
+
+            String incidentKey = geofence.getRequestId();
+            IncidentInfo info = IncidentMetaData.getIncidentInfo(incidentKey);
+            Log.d(TAG, "Looked up meta data for geofence with request ID: " + incidentKey + "  data: " + info);
+            reasonStr.append(info.createReason);
         }
 
         int transitionType = geofencingEvent.getGeofenceTransition();
@@ -52,19 +60,19 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.d(TAG, "onReceive: Geofence_ENTER occured");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER..", Toast.LENGTH_SHORT).show();
-                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_ENTER", "", MapsActivity.class);
+                notificationHelper.sendHighPriorityNotification("USER HAS ENTERED THE GEOFENCE",  reasonStr.toString(), MapsActivity.class);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 //Log.d(TAG, "onReceive: Geofence_DWELL occured");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL..", Toast.LENGTH_SHORT).show();
-                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_DWELL", "", MapsActivity.class);
+                notificationHelper.sendHighPriorityNotification("USER IS IN THE GEOFENCE - DWELL", "Drive Safe!", MapsActivity.class);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 //Log.d(TAG, "onReceive: Geofence_EXIT occured");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT..", Toast.LENGTH_SHORT).show();
-                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_EXIT", "", MapsActivity.class);
+                notificationHelper.sendHighPriorityNotification("USER HAS EXITED THE GEOFENCE", "", MapsActivity.class);
                 break;
         }
     }

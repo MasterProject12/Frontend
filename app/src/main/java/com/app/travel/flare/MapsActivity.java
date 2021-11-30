@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.app.travel.flare.databinding.ActivityMapsBinding;
+import com.app.travel.flare.IncidentMetaData.IncidentInfo;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -55,9 +58,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
-
     private static final String TAG = "MapsActivity";
 
     private GoogleMap mMap;
@@ -70,6 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private float GEOFENCE_RADIUS = 200;
 
     private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
+    private final AtomicInteger suffix = new AtomicInteger(0);
 
     private ActivityMapsBinding binding;
     private String cur_coordinates = "";
@@ -78,10 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int INTERVAL = 1000 * 60 * 2; //2 minutes
     Handler mhandler = new Handler();
 
-    AnimationDrawable animation;
-
-    //Coordinated recieved from the API to be saved in this latlong datatype
-    ArrayList<LatLng> geoCoordinates = new ArrayList<>();
+    //Animation
+    private SpinKitView spinkit;
 
     //ADDED HERE
 
@@ -132,15 +137,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng effiel = new LatLng(48.8589, 2.29365);
+        // Add a marker in Sydney and move the camera 37.3937, -122.0127
+        LatLng effiel = new LatLng(37.3937, -122.0127);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(effiel, 16));
 
         enableUserLocation();
 
         mMap.setOnMapLongClickListener(this);
 
-        tryAddingGeofenceS();
+        //tryAddingGeofenceS();
 
         //This itself can be in a runnable with a loading gif
         startRepeating();
@@ -165,13 +170,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             //Toast.makeText(MapsActivity.this, "2 SECONDS HAS PASSED", Toast.LENGTH_SHORT).show();
             //Trigger the API here
-            callAPItoGetCoordinates(latLng);
+            //spinkit = findViewById(R.id.spin_kit);
+            callAPItoGetCoordinates();
+
             mhandler.postDelayed(this, 120000);
         }
     };
     //runnable.run()
 
-    private void callAPItoGetCoordinates(LatLng latLng){
+    public static String getLatLongKey(double latitude, double longitude)
+    {
+        String latStr = String.format("%.4f", latitude);
+        String longStr = String.format("%.4f", longitude);
+
+        return (latStr + longStr);
+    }
+
+    private void callAPItoGetCoordinates() {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(MapsActivity.this);
         getLastLocation();
@@ -181,31 +196,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "This is the constructed string:" + url);
 
         //Start the loading image to run here
-
-
+        spinkit = findViewById(R.id.spin_kit);
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             Float latitude;
             Float longitude;
 
             @Override
             public void onResponse(JSONArray response) {
+                ArrayList<IncidentInfo> allIncidents = new ArrayList<>();
                 try {
                     for (int i = 0; i < response.length(); i++) {
-                        JSONObject geofenceDets = response.getJSONObject(i).getJSONObject("location");
+                        JSONObject incidentLocation = response.getJSONObject(i).getJSONObject("location");
 
-                        latitude = Float.parseFloat(geofenceDets.getString("latitude"));
-                        longitude = Float.parseFloat(geofenceDets.getString("longitude"));
+                        latitude = Float.parseFloat(incidentLocation.getString("latitude"));
+                        longitude = Float.parseFloat(incidentLocation.getString("longitude"));
 
-                        geoCoordinates.add(new LatLng(latitude,longitude) );
-
+                        JSONObject incidentDeets = response.getJSONObject(i).getJSONObject("incidentData");
+                        String incidentReason = incidentDeets.getString("reason");
+                        Log.d(TAG, "onResponse Latitude: " + latitude + " Longitude: " + longitude);
+                        Log.d(TAG, "incident reason: " + incidentReason);
+                        allIncidents.add(new IncidentInfo(new LatLng(latitude, longitude), incidentReason));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 //Stop the animation image just after getting the response
-
-                Toast.makeText(MapsActivity.this, "THE GEOFENCES OBTAINED ARE: " + geoCoordinates, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "THE GEOFENCES OBTAINED ARE: " + geoCoordinates);
+                tryAddingGeofences(allIncidents);
+                //Toast.makeText(MapsActivity.this, "THE GEOFENCES OBTAINED ARE: " + allIncidents, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "THE GEOFENCES OBTAINED ARE: " + allIncidents);
+                spinkit.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -216,9 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         queue.add(request);
-
     }
-
 
     public void stopRepeating(){
         mhandler.removeCallbacks(runnable);
@@ -237,21 +254,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         }
-
     }
-//Main Activity's
-    //    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == LOCATION_REQUEST_CODE){
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                //Permission Granted
-//                getLastLocation();
-//                checkSettingsAndStartLocationUpdates();
-//            }else{
-//                //Permission not granted
-//            }
-//        }
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
@@ -269,10 +272,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
-
             } else {
                 //Do not have the permission
-
             }
         }
 
@@ -291,53 +292,99 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        if (Build.VERSION.SDK_INT >=29){
-            //We need background permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                tryAddingGeofence(latLng);
-            }else {
-                //Request for the permission
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_BACKGROUND_LOCATION)){
-                    //Show dialog and ask for permission
-                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                }else {
-                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                }
+//        if (Build.VERSION.SDK_INT >=29){
+//            //We need background permission
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+//                tryAddingGeofence(new String("tmp_geofence"), latLng);
+//            }else {
+//                //Request for the permission
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_BACKGROUND_LOCATION)){
+//                    //Show dialog and ask for permission
+//                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
+//                }else {
+//                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
+//                }
+//            }
+//        }else {
+//            tryAddingGeofence(new String("tmp_geofence"), latLng);
+//
+    }
+
+    private void tryAddingGeofences(ArrayList<IncidentInfo> allIncidents){
+        HashMap<String, IncidentInfo> newIncidentInfo = new HashMap<String, IncidentInfo>();
+        ArrayList<String> keysToDelete = new ArrayList<String>();
+
+        /*
+            Create a temporary hash map which stores mapping between the
+            generated keys for a lat long and the actual value from allCoordinates
+            that have been obtained from the current request
+        */
+        for (IncidentInfo info: allIncidents) {
+            String latLngKey = getLatLongKey(info.latLng.latitude, info.latLng.longitude);
+            /* Remove duplicates */
+            if (newIncidentInfo.containsKey(latLngKey)) {
+                continue;
             }
-        }else {
-            tryAddingGeofence(latLng);
+            Log.d(TAG, "Created key: "+ latLngKey + "  for latitude: " + info.latLng.latitude + "  and longitude: " + info.latLng.longitude);
+            newIncidentInfo.put(latLngKey, info);
         }
 
-    }
-
-    private void tryAddingGeofenceS(){
-
-        ArrayList<LatLng> ll = new ArrayList<>();
-//        ll.add(new LatLng(48.863510, 2.288960));
-        ll.add(new LatLng(37.37467956542969,-122.02188110351562));
-
-        Log.d(TAG, "This is the working one!!: " + ll);
-        for (LatLng temp : ll) {
-            tryAddingGeofence(temp);
+        /*
+            Iterate over the current set of recorded lat long keys and check if
+            any of them are missing in the temporary has map. If any of them are missing,
+            mark them for deletion
+         */
+        for (String existingKey : IncidentMetaData.getIncidentKeys()) {
+            if (newIncidentInfo.containsKey(existingKey)) {
+                continue;
+            }
+            Log.d(TAG, "Marking latlong key: " + existingKey + " for deletion");
+            keysToDelete.add(existingKey);
         }
 
-//        for (LatLng temp: geoCoordinates){
-//            tryAddingGeofence(temp);
-//        }
+        /*
+            Iterate over the temporary hash map and crate geofences for keys that do not
+            exist in the lat long key set
+         */
+        for (String newKey: newIncidentInfo.keySet()) {
+            if (IncidentMetaData.hasIncidentInfo(newKey)) {
+                Log.d(TAG, "Skip adding geofence for key: " + newKey + " since it already exists");
+                continue;
+            }
+            Log.d(TAG, "Adding new key: " + newKey + " to final set and creating geofence");
+            IncidentInfo info = newIncidentInfo.get(newKey);
+            //String requestId = getUniqueGeofenceId();
+            String requestId = newKey;
+            info.geofenceRequestId = requestId;
+            IncidentMetaData.addIncidentInfo(newKey, info);
+            Log.d(TAG, "Adding a geofence with request ID: " + requestId);
+            tryAddingGeofence(requestId, info.latLng);
+        }
+
+        /*
+            Delete the corresponding geofences and keys marked for deletion and delete
+         */
+        Log.d(TAG, "Deleting geofences for keys: " + keysToDelete);
+        ArrayList<String> geofenceIdsForDeletion = IncidentMetaData.getGeofenceRequestIds(keysToDelete);
+        geofencingClient.removeGeofences(geofenceIdsForDeletion);
+        for (String latlongKey: keysToDelete) {
+            IncidentMetaData.removeIncidentInfo(latlongKey);
+            Log.d(TAG, "Deleting latlong key " + latlongKey + " from global set");
+        }
     }
 
-    private void tryAddingGeofence(LatLng latLng){
+    private void tryAddingGeofence(String geofenceRequestId, LatLng latLng){
         //mMap.clear();
-        Log.v(TAG, "onSuccess: Circle Added..");
-        Log.d(TAG, "This is what the LAtLong obj looks like: "+ latLng);
+        Log.v(TAG, "tryAddingGeofence: Circle Added..");
+        Log.d(TAG, "This is what the LatLong obj looks like: "+ latLng);
         addMarker(latLng);
         addCircle(latLng, GEOFENCE_RADIUS);
-        addGeofence(latLng, GEOFENCE_RADIUS);
+        addGeofence(geofenceRequestId, latLng, GEOFENCE_RADIUS);
     }
 
-    private void addGeofence(LatLng latLng, float radius) {
+    private void addGeofence(String geofenceRequestId, LatLng latLng, float radius) {
 
-        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, latLng, radius, Geofence
+        Geofence geofence = geofenceHelper.getGeofence(geofenceRequestId, latLng, radius, Geofence
                 .GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
         GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
         PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
@@ -351,7 +398,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onSuccess(Void aVoid) {
 
-                        Log.v(TAG, "onSuccess: Geofence Added..");
+                        Log.v(TAG, "Geofence Added SUCCESSFULLY!");
 
                     }
                 })
@@ -359,7 +406,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         String errorMessage = geofenceHelper.getErrorString(e);
-                        Log.v(TAG, "onFailure: " + errorMessage);
+                        Log.v(TAG, "Error: Geofence could NOT be added because of : " + errorMessage);
 
                     }
                 });
@@ -494,12 +541,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ENDS HERE
 
-    private void howMuchHasTheUserMoved(){
-        Log.d(TAG, "RIGHT HERE-");
-        //Get inital location and compare with latest location at an interval or after travelling 1 mile
-        getLastLocation();
-
-    }
 
 
 }

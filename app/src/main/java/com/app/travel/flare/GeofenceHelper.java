@@ -31,18 +31,12 @@ public class GeofenceHelper extends ContextWrapper {
     }
 
     public Geofence getGeofence(String ID, LatLng latLng, float radius, int transitionTypes) {
-        StringBuilder actualGeofenceId = new StringBuilder();
-        actualGeofenceId.append(ID);
-        actualGeofenceId.append("_");
-        actualGeofenceId.append(String.valueOf(suffix.getAndIncrement()));
-
         return new Geofence.Builder()
                 .setCircularRegion(latLng.latitude, latLng.longitude,radius)
-                .setRequestId(actualGeofenceId.toString())
+                .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
                 .setLoiteringDelay(5000)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE).build();
-
     }
 
     public PendingIntent getPendingIntent(){
